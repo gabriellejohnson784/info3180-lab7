@@ -9,6 +9,7 @@ from app import app
 from flask import render_template, request, jsonify, send_file
 from forms import MovieForm, form_errors
 from models import db, Movie
+from flask_wtf.csrf import generate_csrf
 import os
 
 
@@ -69,6 +70,10 @@ def movies():
         # Return errors
         errors = form_errors(form)
         return jsonify({"errors": errors})
+    
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+ return jsonify({'csrf_token': generate_csrf()}) 
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
