@@ -10,6 +10,7 @@ from flask import render_template, request, jsonify, send_file
 from forms import MovieForm, form_errors
 from models import db, Movie
 from flask_wtf.csrf import generate_csrf
+from werkzeug.utils import secure_filename
 import os
 
 
@@ -46,20 +47,18 @@ def movies():
     form = MovieForm()
 
     if form.validate_on_submit():
-        # Get form data
+        
         title = form.title.data
         description = form.description.data
         poster = request.files['poster']
+        postername= secure_filename(poster.postername)
+        poster.save(os.path.join(app.config['UPLOAD_FOLDER'], movies))
 
-        # Save movie to database
+        
         movie = Movie(title=title, description=description, poster=poster.filename)
         db.session.add(movie)
         db.session.commit()
 
-        # Save file to uploads folder
-        poster.save(os.path.join(app.config['UPLOAD_FOLDER'], poster.filename))
-
-        # Return success message
         return jsonify({
             "message": "Movie Successfully added",
             "title": title,
@@ -67,7 +66,7 @@ def movies():
             "description": description
         })
     else:
-        # Return errors
+        
         errors = form_errors(form)
         return jsonify({"errors": errors})
     
