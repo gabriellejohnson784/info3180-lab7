@@ -7,6 +7,8 @@ This file creates your application.
 
 from app import app
 from flask import render_template, request, jsonify, send_file
+from forms import MovieForm, form_errors
+from models import db, Movie
 import os
 
 
@@ -37,6 +39,36 @@ def form_errors(form):
             error_messages.append(message)
 
     return error_messages
+
+@app.route('/api/v1/movies', methods=['POST'])
+def movies():
+    form = MovieForm()
+
+    if form.validate_on_submit():
+        # Get form data
+        title = form.title.data
+        description = form.description.data
+        poster = request.files['poster']
+
+        # Save movie to database
+        movie = Movie(title=title, description=description, poster=poster.filename)
+        db.session.add(movie)
+        db.session.commit()
+
+        # Save file to uploads folder
+        poster.save(os.path.join(app.config['UPLOAD_FOLDER'], poster.filename))
+
+        # Return success message
+        return jsonify({
+            "message": "Movie Successfully added",
+            "title": title,
+            "poster": poster.filename,
+            "description": description
+        })
+    else:
+        # Return errors
+        errors = form_errors(form)
+        return jsonify({"errors": errors})
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
