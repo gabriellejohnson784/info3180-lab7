@@ -22,7 +22,7 @@ const fetchMovies = async () => {
   try {
     const response = await fetch("/api/v1/movies");
     if (!response.ok) {
-      throw new Error("Failed to fetch movies");
+      throw new Error("Failed !");
     }
     movies.value = await response.json();
   } catch (error) {
