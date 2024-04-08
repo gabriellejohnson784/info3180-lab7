@@ -75,6 +75,19 @@ def movies():
 def get_csrf():
  return jsonify({'csrf_token': generate_csrf()}) 
 
+@app.route('/api/v1/movies', methods=['GET'])
+def get_movies():
+    movies = Movie.query.all()
+    movie_list = []
+    for movie in movies:
+        movie_list.append({
+            'id': movie.id,
+            'title': movie.title,
+            'description': movie.description,
+            'poster': movie.poster_url  
+        })
+    return jsonify({'movies': movie_list})
+
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
     """Send your static text file."""

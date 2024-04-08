@@ -30,15 +30,18 @@ const saveMovie = () => {
  } 
 })
  .then(function (response) {
- return response.json();
- })
- .then(function (data) {
- // display a success message
- console.log(data);
- })
- .catch(function (error) {
- console.log(error);
- });
+      if (response.ok) {
+        console.log('File Upload Successful.');
+        
+        movieTitle.value = '';
+      } else {
+        
+        console.log('Error.');
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
 </script>
 
@@ -55,6 +58,8 @@ const saveMovie = () => {
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
   </div>
 </template>
 

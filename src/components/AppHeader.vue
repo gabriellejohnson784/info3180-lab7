@@ -35,7 +35,3 @@
 <script setup>
 import { RouterLink } from "vue-router";
 </script>
-
-<style>
-/* Add any component specific styles here */
-</style>
